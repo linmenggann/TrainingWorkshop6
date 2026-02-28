@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 報名現況儀表板 | 教學訓練計畫主持人工作坊</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- 引入 Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(-45deg, #1e1b4b, #4c1d95, #7c3aed, #9d174d);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Loading 動畫 */
+        .loader {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: #ec4899;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+    </style>
+</head>
+<body class="text-white p-4 sm:p-8">
+
+    <div class="max-w-7xl mx-auto space-y-6">
+        
+        <!-- 標題區塊 -->
+        <div class="glass-panel rounded-3xl p-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-3xl sm:text-4xl font-black tracking-wide flex items-center gap-3">
+                    📊 工作坊報名儀表板
+                </h1>
+                <p class="text-white/70 mt-2">即時統計 Google Sheets 最新報名狀況</p>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-3">
+                <div id="demoBadge" class="hidden flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/20 border border-yellow-500/50 text-sm">
+                    <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
+                    <span class="text-yellow-200 font-bold">預覽測試資料模式</span>
+                </div>
+                <button onclick="fetchData()" class="bg-white/10 hover:bg-white/20 border border-white/30 px-6 py-2 rounded-full flex items-center gap-2 transition-all">
+                    <span>🔄 重新整理</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 讀取中畫面 -->
+        <div id="loading" class="flex flex-col items-center justify-center py-20 glass-panel rounded-3xl">
+            <div class="loader mb-4"></div>
+            <p class="text-white/80 animate-pulse">正在從 Google Sheets 載入資料...</p>
+        </div>
+
+        <!-- 錯誤提示畫面 (預設隱藏) -->
+        <div id="errorPanel" class="hidden flex-col items-center justify-center py-6 px-4 glass-panel rounded-3xl border-2 border-yellow-500/50 bg-yellow-900/20">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="text-4xl">⚠️</div>
+                <h2 class="text-xl font-bold text-yellow-300">目前無法連線至您的 Google Sheets，已為您載入「測試資料」供預覽。</h2>
+            </div>
+            <div class="text-left text-white/90 space-y-2 bg-black/30 p-5 rounded-xl inline-block text-sm sm:text-base w-full max-w-3xl">
+                <p class="font-bold text-pink-300 mb-2">💡 為什麼會連線失敗？</p>
+                <p>1. <b>預覽環境限制：</b> 某些線上預覽工具會阻擋外部 API 連線 (CORS)。請將此 HTML 檔案下載並用瀏覽器開啟。</p>
+                <p>2. <b>Apps Script 尚未更新：</b> 如果您剛貼上 `doGet` 程式碼，請回到 Apps Script，點擊右上角 <b>「部署」 > 「管理部署作業」</b> > <b>「編輯 (鉛筆圖示)」</b> > <b class="text-yellow-300">將「版本」切換為「建立新版本」</b> 並點擊部署。</p>
+            </div>
+        </div>
+
+        <!-- 內容區域 (預設隱藏，讀取完畢後顯示) -->
+        <div id="dashboardContent" class="hidden space-y-6">
+            
+            <!-- 數據總覽小卡 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="stat-card rounded-2xl p-6 flex items-center gap-4">
+                    <div class="text-4xl bg-white/10 p-4 rounded-xl">👥</div>
+                    <div>
+                        <p class="text-white/70 text-sm">總報名人數</p>
+                        <p class="text-3xl font-black" id="totalCount">0</p>
+                    </div>
+                </div>
+                <div class="stat-card rounded-2xl p-6 flex items-center gap-4">
+                    <div class="text-4xl bg-white/10 p-4 rounded-xl">🏢</div>
+                    <div>
+                        <p class="text-white/70 text-sm">實體參與人數</p>
+                        <p class="text-3xl font-black text-pink-400" id="physicalCount">0</p>
+                    </div>
+                </div>
+                <div class="stat-card rounded-2xl p-6 flex items-center gap-4">
+                    <div class="text-4xl bg-white/10 p-4 rounded-xl">🌐</div>
+                    <div>
+                        <p class="text-white/70 text-sm">線上參與人數</p>
+                        <p class="text-3xl font-black text-cyan-400" id="onlineCount">0</p>
+                    </div>
+                </div>
+                <div class="stat-card rounded-2xl p-6 flex items-center gap-4">
+                    <div class="text-4xl bg-white/10 p-4 rounded-xl">👑</div>
+                    <div>
+                        <p class="text-white/70 text-sm">計畫主持人數</p>
+                        <p class="text-3xl font-black text-purple-400" id="directorCount">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 圖表區 -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- 參與方式圓餅圖 -->
+                <div class="glass-panel rounded-3xl p-6 flex flex-col items-center">
+                    <h2 class="text-xl font-bold mb-4 w-full border-b border-white/20 pb-2">💻 參與方式比例</h2>
+                    <div class="w-full max-w-[250px] aspect-square relative">
+                        <canvas id="modeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 身分環圈圖 -->
+                <div class="glass-panel rounded-3xl p-6 flex flex-col items-center">
+                    <h2 class="text-xl font-bold mb-4 w-full border-b border-white/20 pb-2">👑 主持人身分比例</h2>
+                    <div class="w-full max-w-[250px] aspect-square relative">
+                        <canvas id="directorChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 職類長條圖 -->
+                <div class="glass-panel rounded-3xl p-6 lg:col-span-3">
+                    <h2 class="text-xl font-bold mb-4 w-full border-b border-white/20 pb-2">🩺 報名者職類分佈</h2>
+                    <div class="w-full h-[300px] relative">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 您的 Apps Script 部署網址
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzILU7NK0kfuwhBbuHxsnl8Ax51l1vrogQi2NFQL8y-t-PlIEiLko9l2z6C-Z3CIlkH/exec';
+        
+        // 圖表實例變數
+        let modeChartInstance = null;
+        let directorChartInstance = null;
+        let categoryChartInstance = null;
+
+        // 全域 Chart.js 設定
+        Chart.defaults.color = 'rgba(255, 255, 255, 0.8)';
+        Chart.defaults.font.family = "'Noto Sans TC', sans-serif";
+
+        // 載入資料
+        async function fetchData() {
+            // 切換畫面狀態
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('dashboardContent').classList.add('hidden');
+            document.getElementById('errorPanel').classList.add('hidden');
+            document.getElementById('demoBadge').classList.add('hidden');
+
+            try {
+                const response = await fetch(scriptURL, { 
+                    method: 'GET',
+                    redirect: 'follow'
+                });
+                
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                processData(data);
+                document.getElementById('dashboardContent').classList.remove('hidden');
+
+            } catch (error) {
+                // 將 console.error 改為 console.warn，避免觸發紅色錯誤畫面
+                console.warn('Google Sheets 連線失敗，載入備用測試資料。原因：', error.message);
+                
+                // 發生錯誤時顯示警告面板，並載入測試資料讓畫面仍可正常顯示
+                document.getElementById('errorPanel').classList.remove('hidden');
+                document.getElementById('demoBadge').classList.remove('hidden');
+                document.getElementById('demoBadge').classList.add('flex');
+                
+                const mockData = [
+                    {"報名時間":"2026/01/01","姓名":"測試者A","機構名":"奇美醫院","職稱":"藥師","負責的職類":"藥事","目前是否擔任計畫主持人":"是","預計參與方式":"實體"},
+                    {"報名時間":"2026/01/02","姓名":"測試者B","機構名":"成大醫院","職稱":"護理師","負責的職類":"護理","目前是否擔任計畫主持人":"否","預計參與方式":"線上"},
+                    {"報名時間":"2026/01/02","姓名":"測試者C","機構名":"奇美醫院","職稱":"醫檢師","負責的職類":"醫事檢驗","目前是否擔任計畫主持人":"否","預計參與方式":"實體"},
+                    {"報名時間":"2026/01/03","姓名":"測試者D","機構名":"奇美醫院","職稱":"醫師","負責的職類":"其他","目前是否擔任計畫主持人":"是","預計參與方式":"實體"},
+                    {"報名時間":"2026/01/04","姓名":"測試者E","機構名":"榮民總醫院","職稱":"營養師","負責的職類":"營養","目前是否擔任計畫主持人":"否","預計參與方式":"線上"},
+                    {"報名時間":"2026/01/04","姓名":"測試者F","機構名":"奇美醫院","職稱":"物理治療師","負責的職類":"物理治療","目前是否擔任計畫主持人":"是","預計參與方式":"實體"},
+                    {"報名時間":"2026/01/05","姓名":"測試者G","機構名":"新樓醫院","職稱":"臨床心理師","負責的職類":"臨床心理","目前是否擔任計畫主持人":"否","預計參與方式":"線上"}
+                ];
+                
+                processData(mockData);
+                document.getElementById('dashboardContent').classList.remove('hidden');
+                
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+            }
+        }
+
+        // 處理資料並畫圖
+        function processData(data) {
+            const total = data.length;
+            const physical = data.filter(r => r['預計參與方式'] === '實體').length;
+            const online = data.filter(r => r['預計參與方式'] === '線上').length;
+            const directors = data.filter(r => r['目前是否擔任計畫主持人'] === '是').length;
+            const nonDirectors = total - directors;
+
+            // 更新畫面數字
+            document.getElementById('totalCount').innerText = total;
+            document.getElementById('physicalCount').innerText = physical;
+            document.getElementById('onlineCount').innerText = online;
+            document.getElementById('directorCount').innerText = directors;
+
+            // 統計職類分佈
+            const categoryCounts = {};
+            data.forEach(r => {
+                const cat = r['負責的職類'] || '未填寫';
+                categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+            });
+            
+            // 排序職類
+            const sortedCategories = Object.keys(categoryCounts).sort((a, b) => categoryCounts[b] - categoryCounts[a]);
+            const categoryValues = sortedCategories.map(cat => categoryCounts[cat]);
+
+            // 繪製圖表
+            renderCharts(physical, online, directors, nonDirectors, sortedCategories, categoryValues);
+        }
+
+        function renderCharts(physical, online, directors, nonDirectors, categoryLabels, categoryData) {
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom', labels: { color: '#fff', padding: 20 } } }
+            };
+
+            // 1. 參與方式 (Pie)
+            if (modeChartInstance) modeChartInstance.destroy();
+            modeChartInstance = new Chart(document.getElementById('modeChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['實體參與', '線上參與'],
+                    datasets: [{
+                        data: [physical, online],
+                        backgroundColor: ['rgba(236, 72, 153, 0.8)', 'rgba(34, 211, 238, 0.8)'],
+                        borderColor: 'rgba(255,255,255,0.2)',
+                        borderWidth: 2
+                    }]
+                },
+                options: chartOptions
+            });
+
+            // 2. 主持人身分 (Doughnut)
+            if (directorChartInstance) directorChartInstance.destroy();
+            directorChartInstance = new Chart(document.getElementById('directorChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['是計畫主持人', '否'],
+                    datasets: [{
+                        data: [directors, nonDirectors],
+                        backgroundColor: ['rgba(167, 139, 250, 0.8)', 'rgba(251, 146, 60, 0.8)'],
+                        borderColor: 'rgba(255,255,255,0.2)',
+                        borderWidth: 2
+                    }]
+                },
+                options: { ...chartOptions, cutout: '60%' }
+            });
+
+            // 3. 職類分佈 (Bar)
+            if (categoryChartInstance) categoryChartInstance.destroy();
+            categoryChartInstance = new Chart(document.getElementById('categoryChart'), {
+                type: 'bar',
+                data: {
+                    labels: categoryLabels,
+                    datasets: [{
+                        label: '報名人數',
+                        data: categoryData,
+                        backgroundColor: 'rgba(192, 38, 211, 0.6)',
+                        borderColor: 'rgba(192, 38, 211, 1)',
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            ticks: { stepSize: 1, color: '#fff' },
+                            grid: { color: 'rgba(255,255,255,0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#fff' },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        window.onload = fetchData;
+
+    </script>
+</body>
+</html>
