@@ -106,11 +106,12 @@
             
             <!-- 數據總覽小卡 -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="stat-card rounded-2xl p-6 flex items-center gap-4">
+                <div class="stat-card rounded-2xl p-6 flex items-center gap-4 relative overflow-hidden">
+                    <div id="fullBadge" class="hidden absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg shadow-md">已額滿</div>
                     <div class="text-4xl bg-white/10 p-4 rounded-xl">👥</div>
                     <div>
-                        <p class="text-white/70 text-sm">總報名人數</p>
-                        <p class="text-3xl font-black" id="totalCount">0</p>
+                        <p class="text-white/70 text-sm">總報名人數 (限額 4 名)</p>
+                        <p class="text-3xl font-black"><span id="totalCount">0</span><span class="text-lg text-white/50 font-normal"> / 4</span></p>
                     </div>
                 </div>
                 <div class="stat-card rounded-2xl p-6 flex items-center gap-4">
@@ -243,6 +244,16 @@
 
             // 更新畫面數字
             document.getElementById('totalCount').innerText = total;
+            
+            // 判斷是否額滿 (限額 4 名)，控制紅色標籤顯示
+            if (total >= 4) {
+                document.getElementById('fullBadge').classList.remove('hidden');
+                document.getElementById('totalCount').classList.add('text-red-400');
+            } else {
+                document.getElementById('fullBadge').classList.add('hidden');
+                document.getElementById('totalCount').classList.remove('text-red-400');
+            }
+
             document.getElementById('physicalCount').innerText = physical;
             document.getElementById('onlineCount').innerText = online;
             document.getElementById('directorCount').innerText = directors;
