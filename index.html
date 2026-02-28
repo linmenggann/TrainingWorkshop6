@@ -96,7 +96,10 @@
             <h1 class="text-4xl sm:text-5xl font-black mb-4 tracking-wider" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
                 🎓 教學訓練計畫 <br class="sm:hidden"> 主持人工作坊 🌟
             </h1>
-            <p class="text-lg sm:text-xl text-white/90 font-medium">✨ 提升教學力・點亮未來醫學之星 ✨</p>
+            <p class="text-lg sm:text-xl text-white/90 font-medium mb-4">✨ 提升教學力・點亮未來醫學之星 ✨</p>
+            <div id="capacityBadge" class="inline-block bg-white/20 px-6 py-2 rounded-full font-bold text-pink-200 border border-pink-300/30 animate-pulse">
+                ⏳ 正在連線檢查剩餘名額...
+            </div>
         </div>
 
         <!-- 活動資訊卡片 -->
@@ -208,8 +211,8 @@
 
             <!-- 送出按鈕 -->
             <div class="pt-6">
-                <button type="submit" id="submitButton" class="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-400 hover:to-purple-400 text-white font-black text-xl py-4 rounded-xl shadow-[0_0_20px_rgba(236,72,153,0.5)] transform hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(236,72,153,0.8)] transition-all duration-300 flex justify-center items-center gap-2">
-                    <span id="buttonText">🚀 立即報名送出</span>
+                <button type="submit" id="submitButton" disabled class="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-400 hover:to-purple-400 text-white font-black text-xl py-4 rounded-xl shadow-[0_0_20px_rgba(236,72,153,0.5)] transform hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(236,72,153,0.8)] transition-all duration-300 flex justify-center items-center gap-2 opacity-75 cursor-not-allowed">
+                    <span id="buttonText">⏳ 名額確認中...</span>
                     <span id="loadingSpinner" class="hidden">
                         <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                     </span>
@@ -255,6 +258,54 @@
         const submitBtn = document.getElementById('submitButton');
         const btnText = document.getElementById('buttonText');
         const spinner = document.getElementById('loadingSpinner');
+        const capacityBadge = document.getElementById('capacityBadge');
+
+        const MAX_CAPACITY = 4; // 系統設定限額 4 名
+
+        // 頁面載入時自動連線檢查剩餘名額
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch(scriptURL, { method: 'GET', redirect: 'follow' });
+                if (!response.ok) throw new Error('Network Error');
+                const data = await response.json();
+                
+                if (data.error) throw new Error(data.error);
+                
+                const currentCount = data.length;
+                
+                if (currentCount >= MAX_CAPACITY) {
+                    // 【已額滿處理】
+                    capacityBadge.innerHTML = '🛑 本活動已額滿，停止受理報名';
+                    capacityBadge.className = 'inline-block bg-red-500/80 px-6 py-2 rounded-full font-bold text-white border border-red-300 shadow-[0_0_15px_rgba(239,68,68,0.5)]';
+                    
+                    btnText.textContent = '🛑 報名已額滿';
+                    submitBtn.disabled = true;
+                    // 將按鈕外觀改為不可點擊的灰色
+                    submitBtn.classList.replace('from-pink-500', 'from-gray-500');
+                    submitBtn.classList.replace('to-purple-500', 'to-gray-600');
+                    submitBtn.classList.replace('hover:from-pink-400', 'hover:from-gray-400');
+                    submitBtn.classList.replace('hover:to-purple-400', 'hover:to-gray-500');
+                    
+                    // 鎖定表單所有輸入欄位
+                    Array.from(form.elements).forEach(el => el.disabled = true);
+                } else {
+                    // 【尚有名額】
+                    const remain = MAX_CAPACITY - currentCount;
+                    capacityBadge.innerHTML = `🔥 熱烈報名中！最後席次：<span class="text-2xl">${remain}</span> 名`;
+                    capacityBadge.className = 'inline-block bg-green-500/30 px-6 py-2 rounded-full font-bold text-green-100 border border-green-400/50';
+                    
+                    btnText.textContent = '🚀 立即報名送出';
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                }
+            } catch (error) {
+                console.warn('檢查名額失敗:', error);
+                capacityBadge.innerHTML = '⚠️ 無法取得即時名額，請嘗試直接送出';
+                btnText.textContent = '🚀 立即報名送出';
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
+        });
 
         // 處理表單送出事件
         form.addEventListener('submit', e => {
