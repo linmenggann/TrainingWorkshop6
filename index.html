@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎓 教學訓練計畫主持人工作坊 | 報名表單</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            /* 酷炫紫色漸層背景 */
+            background: linear-gradient(-45deg, #4c1d95, #7c3aed, #c026d3, #db2777);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+        }
+
+        /* 背景動態漸層動畫 */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 浮動動畫 */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* 延遲浮動，讓元素有錯落感 */
+        .floating-delay {
+            animation: float 6s ease-in-out infinite;
+            animation-delay: -3s;
+        }
+
+        /* 玻璃擬物化面板 */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 輸入框發光效果 */
+        .glass-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            outline: none;
+        }
+        .glass-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* 隱藏捲軸但可滾動 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="text-white flex items-center justify-center p-4 sm:p-8 relative overflow-x-hidden">
+
+    <!-- 背景裝飾 Emoji -->
+    <div class="fixed top-10 left-10 text-6xl floating opacity-30 pointer-events-none">✨</div>
+    <div class="fixed bottom-20 left-20 text-6xl floating-delay opacity-30 pointer-events-none">🌟</div>
+    <div class="fixed top-32 right-20 text-5xl floating opacity-30 pointer-events-none">🚀</div>
+    <div class="fixed bottom-10 right-10 text-7xl floating-delay opacity-30 pointer-events-none">💡</div>
+
+    <!-- 主容器 -->
+    <div class="glass-panel rounded-3xl w-full max-w-4xl p-6 sm:p-10 relative z-10">
+        
+        <!-- 標題區 -->
+        <div class="text-center mb-10">
+            <h1 class="text-4xl sm:text-5xl font-black mb-4 tracking-wider" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                🎓 教學訓練計畫 <br class="sm:hidden"> 主持人工作坊 🌟
+            </h1>
+            <p class="text-lg sm:text-xl text-white/90 font-medium">✨ 提升教學力・點亮未來醫學之星 ✨</p>
+        </div>
+
+        <!-- 活動資訊卡片 -->
+        <div class="glass-panel rounded-2xl p-6 mb-10 flex flex-col md:flex-row justify-around items-center gap-4 border-l-4 border-l-pink-400">
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <div class="text-3xl bg-white/20 p-3 rounded-full">📅</div>
+                <div>
+                    <p class="text-sm text-white/70">日期</p>
+                    <p class="text-lg font-bold">2026/01/25</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <div class="text-3xl bg-white/20 p-3 rounded-full">⏰</div>
+                <div>
+                    <p class="text-sm text-white/70">時間</p>
+                    <p class="text-lg font-bold">9:00 ~ 16:00</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <div class="text-3xl bg-white/20 p-3 rounded-full">📍</div>
+                <div>
+                    <p class="text-sm text-white/70">地點</p>
+                    <p class="text-lg font-bold">奇美醫院第五醫療大樓</p>
+                    <p class="text-sm">6樓 563會議室</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 報名表單 -->
+        <form id="registrationForm" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 姓名 -->
+                <div>
+                    <label class="block text-sm font-bold mb-2 ml-1 text-white/90">👤 姓名</label>
+                    <input type="text" name="name" required placeholder="請輸入您的姓名" class="glass-input w-full rounded-xl px-4 py-3">
+                </div>
+                <!-- 機構名 -->
+                <div>
+                    <label class="block text-sm font-bold mb-2 ml-1 text-white/90">🏥 機構名</label>
+                    <input type="text" name="institution" required placeholder="請輸入機構名稱" class="glass-input w-full rounded-xl px-4 py-3">
+                </div>
+                <!-- 職稱 -->
+                <div>
+                    <label class="block text-sm font-bold mb-2 ml-1 text-white/90">💼 職稱</label>
+                    <input type="text" name="jobTitle" required placeholder="請輸入您的職稱" class="glass-input w-full rounded-xl px-4 py-3">
+                </div>
+                <!-- 負責的職類 -->
+                <div>
+                    <label class="block text-sm font-bold mb-2 ml-1 text-white/90">🩺 負責的職類</label>
+                    <select name="category" required class="glass-input w-full rounded-xl px-4 py-3 appearance-none cursor-pointer">
+                        <option value="" disabled selected class="text-gray-500">請選擇職類...</option>
+                        <option value="藥事" class="text-gray-900">💊 藥事</option>
+                        <option value="醫事放射" class="text-gray-900">☢️ 醫事放射</option>
+                        <option value="醫事檢驗" class="text-gray-900">🔬 醫事檢驗</option>
+                        <option value="護理" class="text-gray-900">👩‍⚕️ 護理</option>
+                        <option value="營養" class="text-gray-900">🥗 營養</option>
+                        <option value="呼吸治療" class="text-gray-900">🫁 呼吸治療</option>
+                        <option value="聽力" class="text-gray-900">👂 聽力</option>
+                        <option value="物理治療" class="text-gray-900">🏃‍♂️ 物理治療</option>
+                        <option value="職能治療" class="text-gray-900">🧩 職能治療</option>
+                        <option value="臨床心理" class="text-gray-900">🧠 臨床心理</option>
+                        <option value="語言治療" class="text-gray-900">🗣️ 語言治療</option>
+                        <option value="其他" class="text-gray-900">✨ 其他</option>
+                    </select>
+                </div>
+                <!-- Email -->
+                <div>
+                    <label class="block text-sm font-bold mb-2 ml-1 text-white/90">✉️ Email</label>
+                    <input type="email" name="email" required placeholder="example@email.com" class="glass-input w-full rounded-xl px-4 py-3">
+                </div>
+                <!-- 聯繫電話 -->
+                <div>
+                    <label class="block text-sm font-bold mb-2 ml-1 text-white/90">📞 聯繫電話</label>
+                    <input type="tel" name="phone" required placeholder="請輸入聯絡電話" class="glass-input w-full rounded-xl px-4 py-3">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-white/20">
+                <!-- 計畫主持人確認 -->
+                <div class="glass-panel p-5 rounded-xl">
+                    <label class="block text-base font-bold mb-4 text-white/90">👑 您目前是否擔任教學訓練計畫主持人？</label>
+                    <div class="flex gap-6">
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="radio" name="isDirector" value="是" required class="w-5 h-5 text-pink-500 bg-white/10 border-white/30 focus:ring-pink-500 cursor-pointer">
+                            <span class="group-hover:text-pink-300 transition-colors">是 (Yes)</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="radio" name="isDirector" value="否" required class="w-5 h-5 text-pink-500 bg-white/10 border-white/30 focus:ring-pink-500 cursor-pointer">
+                            <span class="group-hover:text-pink-300 transition-colors">否 (No)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 參與方式 -->
+                <div class="glass-panel p-5 rounded-xl">
+                    <label class="block text-base font-bold mb-4 text-white/90">💻 您預計以何種方式參與？</label>
+                    <div class="flex gap-6">
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="radio" name="participateMode" value="實體" required class="w-5 h-5 text-pink-500 bg-white/10 border-white/30 focus:ring-pink-500 cursor-pointer">
+                            <span class="group-hover:text-pink-300 transition-colors">🏢 實體</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="radio" name="participateMode" value="線上" required class="w-5 h-5 text-pink-500 bg-white/10 border-white/30 focus:ring-pink-500 cursor-pointer">
+                            <span class="group-hover:text-pink-300 transition-colors">🌐 線上</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 送出按鈕 -->
+            <div class="pt-6">
+                <button type="submit" id="submitButton" class="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-400 hover:to-purple-400 text-white font-black text-xl py-4 rounded-xl shadow-[0_0_20px_rgba(236,72,153,0.5)] transform hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(236,72,153,0.8)] transition-all duration-300 flex justify-center items-center gap-2">
+                    <span id="buttonText">🚀 立即報名送出</span>
+                    <span id="loadingSpinner" class="hidden">
+                        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    </span>
+                </button>
+            </div>
+        </form>
+
+        <!-- 底部主辦單位資訊 -->
+        <div class="mt-12 pt-6 border-t border-white/20 text-center sm:text-left flex flex-col sm:flex-row justify-between items-center gap-4 text-white/80 text-sm">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">🏥</span>
+                <span><strong>主辦單位：</strong>奇美醫院教學部</span>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-2 sm:gap-6">
+                <div class="flex items-center gap-2 justify-center">
+                    <span class="text-lg">🧑‍💼</span>
+                    <span><strong>聯絡人：</strong>陳大頭</span>
+                </div>
+                <div class="flex items-center gap-2 justify-center">
+                    <span class="text-lg">📞</span>
+                    <span><strong>電話：</strong>06-281-2811 <span class="bg-white/20 px-2 py-0.5 rounded text-xs ml-1">分機 57112233</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 成功送出提示框 (預設隱藏) -->
+    <div id="successModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-gradient-to-br from-indigo-900 to-purple-900 border border-white/20 p-8 rounded-2xl shadow-2xl text-center max-w-sm mx-4 transform scale-95 transition-transform duration-300" id="successBox">
+            <div class="text-6xl mb-4 floating">🎉</div>
+            <h3 class="text-2xl font-bold mb-2 text-white">報名成功！</h3>
+            <p class="text-white/80 mb-6">我們已收到您的報名資訊，期待在工作坊與您相見！</p>
+            <button onclick="closeModal()" class="bg-white/20 hover:bg-white/30 text-white font-bold py-2 px-6 rounded-full transition-colors w-full">
+                關閉
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 請將此處替換為您的 Apps Script 部署網址 (Web App URL)
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzILU7NK0kfuwhBbuHxsnl8Ax51l1vrogQi2NFQL8y-t-PlIEiLko9l2z6C-Z3CIlkH/exec';
+        const form = document.getElementById('registrationForm');
+        const submitBtn = document.getElementById('submitButton');
+        const btnText = document.getElementById('buttonText');
+        const spinner = document.getElementById('loadingSpinner');
+
+        // 處理表單送出事件
+        form.addEventListener('submit', e => {
+            e.preventDefault(); // 阻止表單預設跳轉
+            
+            // 檢查是否已填寫網址
+            if (scriptURL === 'YOUR_GAS_WEB_APP_URL_HERE') {
+                alert('請先在程式碼中填入 Google Apps Script 的網址！');
+                return;
+            }
+
+            // 切換按鈕為讀取狀態
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+            btnText.textContent = '資料送出中...';
+            spinner.classList.remove('hidden');
+
+            // 發送表單資料到 Google Sheets
+            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                .then(response => response.json())
+                .then(data => {
+                    if(data.result === 'success') {
+                        // 顯示報名成功 Modal
+                        const modal = document.getElementById('successModal');
+                        const box = document.getElementById('successBox');
+                        
+                        modal.classList.remove('hidden');
+                        modal.classList.add('flex');
+                        
+                        setTimeout(() => {
+                            modal.classList.remove('opacity-0');
+                            box.classList.remove('scale-95');
+                            box.classList.add('scale-100');
+                        }, 10);
+
+                        form.reset(); // 清空表單
+                    } else {
+                        alert('送出失敗，請稍後再試！\n錯誤訊息：' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error!', error.message);
+                    alert('連線失敗，請檢查網路連線後再試。');
+                })
+                .finally(() => {
+                    // 恢復按鈕狀態
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                    btnText.textContent = '🚀 立即報名送出';
+                    spinner.classList.add('hidden');
+                });
+        });
+
+        // 關閉提示框
+        function closeModal() {
+            const modal = document.getElementById('successModal');
+            const box = document.getElementById('successBox');
+            
+            modal.classList.add('opacity-0');
+            box.classList.remove('scale-100');
+            box.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+    </script>
+</body>
+</html>
