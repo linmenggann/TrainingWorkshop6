@@ -11,18 +11,13 @@
     <style>
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            /* 酷炫紫色漸層背景 */
-            background: linear-gradient(-45deg, #4c1d95, #7c3aed, #c026d3, #db2777);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+            /* 加入您指定的背景圖片，並疊加一層黑色漸層遮罩讓文字更容易閱讀 */
+            background-image: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.8)), url('https://raw.githubusercontent.com/linmenggann/TrainingWorkshop6/main/%E5%90%B3%E5%9C%92__A1_A%E7%89%88.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
             min-height: 100vh;
-        }
-
-        /* 背景動態漸層動畫 */
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
 
         /* 浮動動畫 */
