@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🎓 教學訓練計畫主持人工作坊 ✨</title>
+<style>
+  :root {
+    --p1: #3a0ca3;
+    --p2: #7209b7;
+    --p3: #b5179e;
+    --p4: #f72585;
+    --p5: #4361ee;
+    --glass: rgba(255, 255, 255, 0.12);
+    --glass-border: rgba(255, 255, 255, 0.25);
+    --text: #ffffff;
+    --text-soft: rgba(255, 255, 255, 0.85);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: "Microsoft JhengHei", "PingFang TC", "Segoe UI", -apple-system, sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body {
+    background:
+      linear-gradient(135deg, rgba(36,0,70,0.78) 0%, rgba(58,12,163,0.72) 40%, rgba(114,9,183,0.72) 80%, rgba(181,23,158,0.78) 100%),
+      radial-gradient(circle at 15% 10%, rgba(247,37,133,0.55) 0%, transparent 45%),
+      radial-gradient(circle at 85% 20%, rgba(76,201,240,0.5) 0%, transparent 40%),
+      radial-gradient(circle at 80% 85%, rgba(114,9,183,0.55) 0%, transparent 50%),
+      url("布雷西亞廳特展.jpg") center center / cover no-repeat,
+      #240046;
+    background-attachment: fixed;
+    animation: bgShift 18s ease-in-out infinite alternate;
+    padding: 40px 20px 80px;
+  }
+
+  @keyframes bgShift {
+    0% { background-position: 0% 0%, 100% 0%, 100% 100%, 0% 0%; }
+    100% { background-position: 20% 15%, 80% 10%, 90% 90%, 0% 0%; }
+  }
+
+  /* floating emoji background */
+  .sparkles {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .sparkles span {
+    position: absolute; font-size: 28px; opacity: 0.35;
+    animation: float 14s linear infinite;
+  }
+  .sparkles span:nth-child(1) { left: 5%; top: 10%; animation-duration: 16s; }
+  .sparkles span:nth-child(2) { left: 92%; top: 18%; animation-duration: 20s; font-size: 36px; }
+  .sparkles span:nth-child(3) { left: 20%; top: 70%; animation-duration: 22s; }
+  .sparkles span:nth-child(4) { left: 75%; top: 55%; animation-duration: 18s; font-size: 32px; }
+  .sparkles span:nth-child(5) { left: 50%; top: 30%; animation-duration: 24s; }
+  .sparkles span:nth-child(6) { left: 10%; top: 45%; animation-duration: 19s; font-size: 30px; }
+  .sparkles span:nth-child(7) { left: 85%; top: 80%; animation-duration: 21s; }
+  .sparkles span:nth-child(8) { left: 35%; top: 85%; animation-duration: 17s; font-size: 38px; }
+
+  @keyframes float {
+    0%   { transform: translateY(0) rotate(0deg); }
+    50%  { transform: translateY(-40px) rotate(180deg); }
+    100% { transform: translateY(0) rotate(360deg); }
+  }
+
+  .wrap { max-width: 1180px; margin: 0 auto; position: relative; z-index: 1; }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 60px 24px 40px;
+    border-radius: 28px;
+    background: var(--glass);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute; inset: -2px;
+    background: linear-gradient(120deg, transparent 30%, rgba(247,37,133,0.35), transparent 70%);
+    animation: shine 6s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .hero .badge {
+    display: inline-block;
+    padding: 8px 20px;
+    background: linear-gradient(90deg, #f72585, #7209b7);
+    border-radius: 999px;
+    font-size: 14px;
+    letter-spacing: 2px;
+    margin-bottom: 18px;
+    box-shadow: 0 6px 24px rgba(247,37,133,0.45);
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+  }
+
+  .hero h1 {
+    font-size: clamp(30px, 5vw, 54px);
+    font-weight: 900;
+    background: linear-gradient(90deg, #fff, #ffd6fa, #fff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 14px;
+    text-shadow: 0 4px 30px rgba(255,255,255,0.15);
+    line-height: 1.2;
+  }
+
+  .hero .sub {
+    font-size: 18px;
+    color: var(--text-soft);
+    margin-bottom: 28px;
+  }
+
+  /* INFO CARDS (activity info) */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 18px;
+    margin-top: 10px;
+  }
+  .info-card {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--glass-border);
+    border-radius: 18px;
+    padding: 22px 18px;
+    transition: all 0.35s ease;
+    text-align: left;
+  }
+  .info-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    background: rgba(255,255,255,0.18);
+    box-shadow: 0 14px 40px rgba(247,37,133,0.35);
+  }
+  .info-card .icon {
+    font-size: 36px;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .info-card .label {
+    font-size: 13px; letter-spacing: 2px;
+    color: #ffb3ec; text-transform: uppercase;
+  }
+  .info-card .value {
+    font-size: 19px; font-weight: 700; margin-top: 6px; line-height: 1.4;
+  }
+
+  /* SECTIONS */
+  section.block {
+    margin-top: 50px;
+    padding: 36px 28px;
+    border-radius: 26px;
+    background: var(--glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 18px 50px rgba(0,0,0,0.3);
+  }
+
+  .section-title {
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 900;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-title .emoji {
+    font-size: 1.3em;
+    filter: drop-shadow(0 4px 14px rgba(247,37,133,0.6));
+    animation: wiggle 3s ease-in-out infinite;
+  }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
+  }
+  .section-desc {
+    color: var(--text-soft); font-size: 15px; margin-bottom: 22px;
+  }
+
+  /* form fields preview */
+  .fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .field {
+    background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    padding: 18px 18px 16px;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  .field.full { grid-column: 1 / -1; }
+  .field:hover {
+    border-color: #ff9ee0;
+    box-shadow: 0 8px 30px rgba(247,37,133,0.4);
+    transform: translateY(-3px);
+  }
+  .field input[type="text"],
+  .field input[type="email"],
+  .field input[type="tel"],
+  .field select {
+    width: 100%;
+    margin-top: 10px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(0,0,0,0.28);
+    color: #fff;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    transition: all 0.25s;
+  }
+  .field input:focus, .field select:focus {
+    border-color: #f72585;
+    box-shadow: 0 0 0 3px rgba(247,37,133,0.25);
+    background: rgba(0,0,0,0.4);
+  }
+  .field input::placeholder { color: rgba(255,255,255,0.5); }
+  .field select option { background: #3a0ca3; color: #fff; }
+
+  .radio-row {
+    display: flex; gap: 10px; margin-top: 10px;
+  }
+  .radio-row label {
+    flex: 1; cursor: pointer;
+    text-align: center;
+    background: rgba(255,255,255,0.08);
+    border: 1px dashed rgba(255,255,255,0.4);
+    padding: 11px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    transition: all 0.25s;
+  }
+  .radio-row input[type="radio"] { display: none; }
+  .radio-row label:hover {
+    background: rgba(255,255,255,0.15);
+    transform: translateY(-2px);
+  }
+  .radio-row input[type="radio"]:checked + label,
+  .radio-row label.checked {
+    background: linear-gradient(135deg, #f72585, #7209b7);
+    border: 1px solid transparent;
+    box-shadow: 0 8px 22px rgba(247,37,133,0.55);
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  .submit-msg {
+    margin-top: 16px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 15px;
+    text-align: center;
+    display: none;
+  }
+  .submit-msg.show { display: block; animation: pop 0.4s ease; }
+  .submit-msg.ok { background: rgba(46, 213, 115, 0.25); border: 1px solid #2ed573; }
+  .submit-msg.err { background: rgba(255, 71, 87, 0.25); border: 1px solid #ff4757; }
+  @keyframes pop {
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .required { color: #ffd166; margin-left: 4px; }
+
+  /* 名額狀態 banner */
+  .capacity-banner {
+    margin: 20px 0 8px;
+    padding: 16px 22px;
+    border-radius: 18px;
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    font-weight: 700;
+    background: linear-gradient(90deg, rgba(76,201,240,0.25), rgba(67,97,238,0.25));
+    border: 1px solid rgba(76,201,240,0.5);
+  }
+  .capacity-banner .cap-icon { font-size: 26px; }
+  .capacity-banner .cap-text { flex: 1; min-width: 220px; font-size: 15px; }
+  .capacity-banner .cap-num {
+    font-size: 28px; font-weight: 900;
+    background: linear-gradient(90deg, #fff, #ffd6fa);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .capacity-banner.warn {
+    background: linear-gradient(90deg, rgba(255,183,77,0.3), rgba(247,37,133,0.25));
+    border-color: #ffb74d;
+  }
+  .capacity-banner.full {
+    background: linear-gradient(90deg, rgba(255,71,87,0.35), rgba(183,28,28,0.45));
+    border-color: #ff4757;
+  }
+
+  /* 額滿覆蓋層 */
+  .form-locked { position: relative; }
+  .form-locked .fields { opacity: 0.35; pointer-events: none; filter: grayscale(0.6); }
+  .full-overlay {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px; padding: 40px 20px; text-align: center;
+    background: radial-gradient(circle, rgba(255,71,87,0.35), rgba(58,12,163,0.55));
+    border-radius: 20px;
+    backdrop-filter: blur(4px);
+    z-index: 5;
+  }
+  .full-overlay .seal {
+    font-size: 90px;
+    filter: drop-shadow(0 10px 30px rgba(255,71,87,0.8));
+    animation: wiggle 2s ease-in-out infinite;
+  }
+  .full-overlay .headline {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 900;
+    background: linear-gradient(90deg, #ff4757, #f72585, #fff);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    letter-spacing: 4px;
+  }
+  .full-overlay .desc {
+    font-size: 16px; color: var(--text-soft); max-width: 480px;
+  }
+  .full-overlay .stamp {
+    border: 4px double #ff4757;
+    padding: 8px 24px; border-radius: 12px;
+    color: #ff4757; font-weight: 900; letter-spacing: 6px;
+    transform: rotate(-6deg);
+    background: rgba(255,255,255,0.9);
+    font-size: 20px;
+  }
+  .field .num {
+    position: absolute; top: -10px; left: 16px;
+    background: linear-gradient(90deg, #f72585, #7209b7);
+    color: #fff; font-weight: 900; font-size: 12px;
+    padding: 4px 10px; border-radius: 999px;
+    letter-spacing: 1px;
+  }
+  .field .name {
+    font-weight: 700; font-size: 16px;
+    margin-top: 4px; margin-bottom: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .field .hint {
+    font-size: 13px; color: var(--text-soft);
+    line-height: 1.5;
+  }
+  .field .placeholder {
+    margin-top: 10px;
+    padding: 9px 12px;
+    background: rgba(0,0,0,0.25);
+    border-radius: 10px;
+    font-size: 13px; color: #d9b9ff;
+    font-style: italic;
+    border-left: 3px solid #f72585;
+  }
+
+  /* job category chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .chip {
+    background: linear-gradient(135deg, rgba(247,37,133,0.25), rgba(114,9,183,0.35));
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  .chip:hover {
+    background: linear-gradient(135deg, #f72585, #7209b7);
+    transform: translateY(-3px) scale(1.06);
+    box-shadow: 0 6px 20px rgba(247,37,133,0.6);
+  }
+
+  /* two-option toggle visual */
+  .twopack { display: flex; gap: 10px; margin-top: 10px; }
+  .pick {
+    flex: 1;
+    text-align: center;
+    background: rgba(255,255,255,0.08);
+    border: 1px dashed rgba(255,255,255,0.4);
+    padding: 10px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    transition: all 0.25s;
+  }
+  .pick:hover {
+    background: linear-gradient(135deg, #4cc9f0, #4361ee);
+    border-color: transparent;
+    transform: scale(1.04);
+  }
+
+  /* footer / contact */
+  .contact {
+    margin-top: 50px;
+    padding: 34px 28px;
+    border-radius: 26px;
+    background: linear-gradient(135deg, rgba(247,37,133,0.35), rgba(58,12,163,0.55));
+    border: 1px solid rgba(255,255,255,0.3);
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(114,9,183,0.5);
+  }
+  .contact h3 {
+    font-size: 22px; margin-bottom: 14px; font-weight: 900;
+  }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px; margin-top: 14px;
+  }
+  .contact-item {
+    background: rgba(0,0,0,0.25);
+    padding: 16px 18px; border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .contact-item .k {
+    font-size: 12px; color: #ffb3ec; letter-spacing: 2px;
+  }
+  .contact-item .v {
+    font-size: 17px; font-weight: 700; margin-top: 4px;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    margin-top: 24px;
+    padding: 14px 38px;
+    background: linear-gradient(90deg, #f72585, #b5179e, #7209b7);
+    background-size: 200% auto;
+    color: #fff;
+    font-weight: 900;
+    font-size: 17px;
+    border-radius: 999px;
+    text-decoration: none;
+    box-shadow: 0 10px 30px rgba(247,37,133,0.55);
+    transition: all 0.35s;
+    animation: gradMove 4s ease infinite;
+  }
+  @keyframes gradMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .cta-btn:hover {
+    transform: translateY(-4px) scale(1.04);
+    box-shadow: 0 18px 40px rgba(247,37,133,0.75);
+  }
+
+  /* timeline-like ribbon for agenda */
+  .ribbon {
+    margin-top: 24px;
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+  }
+  .tag {
+    padding: 8px 16px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .footer-note {
+    text-align: center;
+    margin-top: 40px;
+    color: rgba(255,255,255,0.55);
+    font-size: 13px;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 20px 12px 60px; }
+    .hero { padding: 40px 18px 30px; }
+    section.block { padding: 26px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sparkles" aria-hidden="true">
+  <span>✨</span><span>🎓</span><span>💜</span><span>🚀</span>
+  <span>⭐</span><span>🎯</span><span>💫</span><span>🎉</span>
+</div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="badge">🏥 奇美醫院教學部 主辦</div>
+    <h1>🎓 教學訓練計畫主持人工作坊 ✨</h1>
+    <p class="sub">一起打造更專業的醫事教學訓練力 🚀 實體 &amp; 線上雙軌並行</p>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <span class="icon">📅</span>
+        <div class="label">日期</div>
+        <div class="value">2026 / 01 / 25</div>
+      </div>
+      <div class="info-card">
+        <span class="icon">⏰</span>
+        <div class="label">時間</div>
+        <div class="value">09:00 ~ 16:00</div>
+      </div>
+      <div class="info-card">
+        <span class="icon">📍</span>
+        <div class="label">地點</div>
+        <div class="value">奇美醫院<br/>第五醫療大樓 6F 563 會議室</div>
+      </div>
+      <div class="info-card">
+        <span class="icon">🎯</span>
+        <div class="label">對象</div>
+        <div class="value">教學訓練計畫主持人 &amp; 各職類同仁</div>
+      </div>
+    </div>
+
+    <div class="ribbon">
+      <span class="tag">💡 專業成長</span>
+      <span class="tag">🤝 跨職類交流</span>
+      <span class="tag">📚 教學實務</span>
+      <span class="tag">🎤 互動工作坊</span>
+    </div>
+  </header>
+
+  <!-- REGISTRATION FORM -->
+  <section class="block" id="register">
+    <div class="section-title"><span class="emoji">📝</span>線上報名 Online Registration</div>
+    <p class="section-desc">請完成以下欄位，送出後資料會自動彙整到主辦單位 💖</p>
+
+    <div id="capacityBanner" class="capacity-banner">
+      <span class="cap-icon">🪑</span>
+      <div class="cap-text">
+        本活動限額 <strong>4 名</strong>，名額有限，額滿即截止報名。
+        <div style="font-size:13px; font-weight:500; opacity:0.85;">正在確認剩餘名額中...</div>
+      </div>
+      <div class="cap-num" id="capNum">—</div>
+    </div>
+
+    <form id="regForm" novalidate>
+      <div class="fields">
+
+        <div class="field">
+          <span class="num">01</span>
+          <div class="name">👤 姓名<span class="required">*</span></div>
+          <div class="hint">請填寫您的全名</div>
+          <input type="text" name="name" placeholder="例如：王小明" required />
+        </div>
+
+        <div class="field">
+          <span class="num">02</span>
+          <div class="name">🏢 機構名稱<span class="required">*</span></div>
+          <div class="hint">服務的醫療機構全名</div>
+          <input type="text" name="organization" placeholder="例如：○○醫院" required />
+        </div>
+
+        <div class="field">
+          <span class="num">03</span>
+          <div class="name">💼 職稱<span class="required">*</span></div>
+          <div class="hint">您在機構中的職務名稱</div>
+          <input type="text" name="title" placeholder="例如：主任 / 督導" required />
+        </div>
+
+        <div class="field">
+          <span class="num">04</span>
+          <div class="name">🧪 負責的職類<span class="required">*</span></div>
+          <div class="hint">請從下拉選單擇一</div>
+          <select name="jobCategory" required>
+            <option value="" disabled selected>-- 請選擇 --</option>
+            <option value="藥事">💊 藥事</option>
+            <option value="醫事放射">📷 醫事放射</option>
+            <option value="醫事檢驗">🔬 醫事檢驗</option>
+            <option value="護理">💉 護理</option>
+            <option value="營養">🥗 營養</option>
+            <option value="呼吸治療">🌬️ 呼吸治療</option>
+            <option value="聽力">👂 聽力</option>
+            <option value="物理治療">🏃 物理治療</option>
+            <option value="職能治療">🖐️ 職能治療</option>
+            <option value="臨床心理">🧠 臨床心理</option>
+            <option value="語言治療">🗣️ 語言治療</option>
+            <option value="其他">✨ 其他</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <span class="num">05</span>
+          <div class="name">🎖️ 是否擔任教學訓練計畫主持人<span class="required">*</span></div>
+          <div class="hint">二擇一</div>
+          <div class="radio-row">
+            <input type="radio" id="host-y" name="isHost" value="是" required />
+            <label for="host-y">✅ 是</label>
+            <input type="radio" id="host-n" name="isHost" value="否" />
+            <label for="host-n">🚫 否</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="num">06</span>
+          <div class="name">🌐 參與方式<span class="required">*</span></div>
+          <div class="hint">二擇一</div>
+          <div class="radio-row">
+            <input type="radio" id="att-onsite" name="attendance" value="實體" required />
+            <label for="att-onsite">🏫 實體參加</label>
+            <input type="radio" id="att-online" name="attendance" value="線上" />
+            <label for="att-online">💻 線上參加</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="num">07</span>
+          <div class="name">📧 Email<span class="required">*</span></div>
+          <div class="hint">用於寄送確認信與上課連結</div>
+          <input type="email" name="email" placeholder="example@domain.com" required />
+        </div>
+
+        <div class="field">
+          <span class="num">08</span>
+          <div class="name">📞 聯繫電話<span class="required">*</span></div>
+          <div class="hint">方便緊急聯繫與通知異動</div>
+          <input type="tel" name="phone" placeholder="例如：0912-345-678" required />
+        </div>
+
+        <div class="field full" style="text-align:center; background:transparent; border:none; box-shadow:none;">
+          <button type="submit" class="cta-btn" id="submitBtn" style="border:none; cursor:pointer; font-family:inherit;">
+            🚀 送出報名 Submit ✨
+          </button>
+          <div class="submit-msg" id="submitMsg"></div>
+        </div>
+
+      </div>
+    </form>
+  </section>
+
+  <!-- HIGHLIGHT SECTION -->
+  <section class="block">
+    <div class="section-title"><span class="emoji">🌟</span>工作坊亮點</div>
+    <p class="section-desc">為什麼你絕對不能錯過這場活動？</p>
+    <div class="info-grid">
+      <div class="info-card">
+        <span class="icon">🎯</span>
+        <div class="label">精準目標</div>
+        <div class="value">聚焦教學訓練計畫主持人所需核心職能</div>
+      </div>
+      <div class="info-card">
+        <span class="icon">🧩</span>
+        <div class="label">多元職類</div>
+        <div class="value">12 個醫事職類齊聚，跨領域交流激盪</div>
+      </div>
+      <div class="info-card">
+        <span class="icon">💻</span>
+        <div class="label">雙軌並行</div>
+        <div class="value">實體現場 + 線上直播，彈性參與</div>
+      </div>
+      <div class="info-card">
+        <span class="icon">🏆</span>
+        <div class="label">實務導向</div>
+        <div class="value">由奇美醫院教學部精心規劃</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact">
+    <h3>📣 聯絡資訊 Contact</h3>
+    <p style="color: var(--text-soft); font-size:15px;">有任何問題嗎？歡迎與我們聯繫 💌</p>
+
+    <div class="contact-grid">
+      <div class="contact-item">
+        <div class="k">🏥 主辦單位</div>
+        <div class="v">奇美醫院 教學部</div>
+      </div>
+      <div class="contact-item">
+        <div class="k">🙋 聯絡人</div>
+        <div class="v">陳大頭</div>
+      </div>
+      <div class="contact-item">
+        <div class="k">☎️ 聯繫電話</div>
+        <div class="v">06-281-2811 #57112233</div>
+      </div>
+    </div>
+
+    <a class="cta-btn" href="#register">🚀 我要報名 立刻加入 ✨</a>
+  </section>
+
+  <p class="footer-note">© 2026 奇美醫院 教學部 • 教學訓練計畫主持人工作坊 🎓💜</p>
+
+</div>
+
+<script>
+  // ⚠️ 部署 Apps Script 後，將下列網址替換為 Web App 部署網址
+  const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzO0PTIIMwhT22qe6GzfFd_uT08kXVB5Ueo6oPz9V6AVzX5BIREm5Lqq7b1-OwNX3Oo/exec";
+
+  const form = document.getElementById("regForm");
+  const submitBtn = document.getElementById("submitBtn");
+  const submitMsg = document.getElementById("submitMsg");
+  const capacityBanner = document.getElementById("capacityBanner");
+  const capNum = document.getElementById("capNum");
+
+  const CAPACITY_LIMIT = 4;
+  let isFull = false;
+
+  function showMsg(text, type) {
+    submitMsg.textContent = text;
+    submitMsg.className = "submit-msg show " + type;
+  }
+
+  function updateCapacityUI(data) {
+    const total = Number(data.total) || 0;
+    const remaining = Number(data.remaining != null ? data.remaining : Math.max(0, CAPACITY_LIMIT - total));
+    const capacity = Number(data.capacity) || CAPACITY_LIMIT;
+    const full = data.full === true || remaining <= 0;
+
+    capNum.textContent = full ? "0 / " + capacity : remaining + " / " + capacity;
+    capacityBanner.classList.remove("warn", "full");
+
+    if (full) {
+      isFull = true;
+      capacityBanner.classList.add("full");
+      capacityBanner.querySelector(".cap-text").innerHTML =
+        "<strong>🚫 報名已額滿</strong>" +
+        "<div style='font-size:13px; font-weight:500; opacity:0.9;'>很抱歉，本活動限額 " + capacity +
+        " 名，已停止受理報名。如有需求請洽主辦單位。</div>";
+      lockForm();
+    } else {
+      isFull = false;
+      if (remaining <= 2) capacityBanner.classList.add("warn");
+      capacityBanner.querySelector(".cap-text").innerHTML =
+        "本活動限額 <strong>" + capacity + " 名</strong>，目前剩餘 <strong>" + remaining + "</strong> 個名額。" +
+        "<div style='font-size:13px; font-weight:500; opacity:0.85;'>" +
+        (remaining <= 2 ? "⚠️ 名額即將額滿，請儘速報名！" : "歡迎報名參加 💖") +
+        "</div>";
+    }
+  }
+
+  function lockForm() {
+    const section = document.getElementById("register");
+    if (section.querySelector(".full-overlay")) return;
+    section.classList.add("form-locked");
+    submitBtn.disabled = true;
+
+    const overlay = document.createElement("div");
+    overlay.className = "full-overlay";
+    overlay.innerHTML =
+      '<div class="seal">🚫</div>' +
+      '<div class="headline">額 滿</div>' +
+      '<div class="stamp">SOLD OUT</div>' +
+      '<div class="desc">本活動限額 4 名，目前已達報名上限，系統已自動停止受理報名。<br/>感謝您的踴躍參與，歡迎洽詢下次梯次 💜</div>';
+    section.querySelector("form").insertAdjacentElement("beforebegin", overlay);
+  }
+
+  async function checkCapacity() {
+    try {
+      const res = await fetch(GAS_WEBAPP_URL + "?action=status&t=" + Date.now(), { method: "GET" });
+      const data = await res.json();
+      if (data.status === "ok") {
+        updateCapacityUI(data);
+      }
+    } catch (err) {
+      capacityBanner.querySelector(".cap-text").innerHTML =
+        "本活動限額 <strong>4 名</strong>，名額有限，額滿即截止報名。" +
+        "<div style='font-size:13px; font-weight:500; opacity:0.85;'>⚠️ 無法連線確認剩餘名額，送出時將由系統再次確認。</div>";
+    }
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (isFull) {
+      showMsg("🚫 報名已額滿，系統已停止受理。", "err");
+      return;
+    }
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    submitBtn.disabled = true;
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = "⏳ 送出中...";
+    submitMsg.className = "submit-msg";
+
+    const fd = new FormData(form);
+
+    try {
+      const res = await fetch(GAS_WEBAPP_URL, {
+        method: "POST",
+        body: fd,
+      });
+      const data = await res.json();
+      if (data.status === "ok") {
+        showMsg("🎉 報名成功！您是第 " + data.total + " 位報名者，剩餘名額 " + data.remaining + " 名 💌", "ok");
+        form.reset();
+        updateCapacityUI(data);
+      } else if (data.status === "full") {
+        showMsg("🚫 " + (data.message || "名額已額滿"), "err");
+        updateCapacityUI(data);
+      } else {
+        showMsg("⚠️ 送出失敗：" + (data.message || "未知錯誤"), "err");
+      }
+    } catch (err) {
+      showMsg("❌ 網路連線失敗，請稍後再試。(" + err.message + ")", "err");
+    } finally {
+      if (!isFull) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    }
+  });
+
+  checkCapacity();
+  setInterval(checkCapacity, 30000);
+</script>
+
+</body>
+</html>
