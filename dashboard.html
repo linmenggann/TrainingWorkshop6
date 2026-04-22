@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>📊 報名現況儀表板 · 教學訓練計畫主持人工作坊</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --p1: #3a0ca3;
+    --p2: #7209b7;
+    --p3: #b5179e;
+    --p4: #f72585;
+    --p5: #4cc9f0;
+    --glass: rgba(255, 255, 255, 0.12);
+    --glass-border: rgba(255, 255, 255, 0.25);
+    --text: #ffffff;
+    --text-soft: rgba(255, 255, 255, 0.85);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: "Microsoft JhengHei", "PingFang TC", "Segoe UI", -apple-system, sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body {
+    background:
+      radial-gradient(circle at 15% 10%, #f72585 0%, transparent 45%),
+      radial-gradient(circle at 85% 20%, #4cc9f0 0%, transparent 40%),
+      radial-gradient(circle at 80% 85%, #7209b7 0%, transparent 50%),
+      linear-gradient(135deg, #240046 0%, #3a0ca3 40%, #7209b7 80%, #b5179e 100%);
+    background-attachment: fixed;
+    animation: bgShift 18s ease-in-out infinite alternate;
+    padding: 30px 20px 60px;
+  }
+  @keyframes bgShift {
+    0% { background-position: 0% 0%, 100% 0%, 100% 100%, 0% 0%; }
+    100% { background-position: 20% 15%, 80% 10%, 90% 90%, 0% 0%; }
+  }
+
+  .sparkles {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .sparkles span {
+    position: absolute; font-size: 28px; opacity: 0.3;
+    animation: float 16s linear infinite;
+  }
+  .sparkles span:nth-child(1) { left: 6%; top: 12%; animation-duration: 18s; }
+  .sparkles span:nth-child(2) { left: 90%; top: 20%; animation-duration: 22s; font-size: 34px; }
+  .sparkles span:nth-child(3) { left: 22%; top: 75%; animation-duration: 24s; }
+  .sparkles span:nth-child(4) { left: 78%; top: 60%; animation-duration: 20s; font-size: 30px; }
+  .sparkles span:nth-child(5) { left: 50%; top: 35%; animation-duration: 26s; }
+  .sparkles span:nth-child(6) { left: 12%; top: 50%; animation-duration: 21s; }
+  @keyframes float {
+    0%   { transform: translateY(0) rotate(0deg); }
+    50%  { transform: translateY(-40px) rotate(180deg); }
+    100% { transform: translateY(0) rotate(360deg); }
+  }
+
+  .wrap { max-width: 1280px; margin: 0 auto; position: relative; z-index: 1; }
+
+  /* HEADER */
+  .topbar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
+    padding: 22px 26px;
+    border-radius: 22px;
+    background: var(--glass);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 18px 50px rgba(0,0,0,0.3);
+    margin-bottom: 24px;
+  }
+  .topbar h1 {
+    flex: 1; min-width: 260px;
+    font-size: clamp(20px, 2.6vw, 30px);
+    font-weight: 900;
+    background: linear-gradient(90deg, #fff, #ffd6fa, #fff);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    line-height: 1.3;
+  }
+  .topbar .meta {
+    font-size: 13px; color: var(--text-soft); letter-spacing: 1px;
+  }
+  .topbar .pill {
+    display: inline-block;
+    padding: 4px 12px; border-radius: 999px;
+    background: linear-gradient(90deg, #f72585, #7209b7);
+    font-size: 12px; font-weight: 700; margin-right: 8px;
+  }
+  .btn {
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #f72585, #7209b7);
+    border: none;
+    color: #fff; font-weight: 800; font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(247,37,133,0.5);
+    transition: all 0.25s;
+    font-family: inherit;
+  }
+  .btn:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 12px 30px rgba(247,37,133,0.7); }
+  .btn.ghost {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.3);
+    box-shadow: none;
+  }
+  .btn.ghost:hover { background: rgba(255,255,255,0.22); }
+
+  /* STATS */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px; margin-bottom: 24px;
+  }
+  .stat {
+    padding: 22px;
+    border-radius: 20px;
+    background: var(--glass);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 14px 40px rgba(0,0,0,0.28);
+    transition: transform 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .stat:hover { transform: translateY(-4px); }
+  .stat::after {
+    content: "";
+    position: absolute; width: 140px; height: 140px;
+    right: -50px; bottom: -60px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(247,37,133,0.35), transparent 70%);
+  }
+  .stat .icon {
+    display: inline-flex;
+    width: 46px; height: 46px;
+    align-items: center; justify-content: center;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #f72585, #7209b7);
+    font-size: 22px;
+    box-shadow: 0 6px 18px rgba(247,37,133,0.45);
+    margin-bottom: 10px;
+  }
+  .stat .label {
+    font-size: 13px; color: #ffd6fa; letter-spacing: 2px; text-transform: uppercase;
+  }
+  .stat .value {
+    font-size: 36px; font-weight: 900; margin-top: 4px;
+    background: linear-gradient(90deg, #fff, #ffd6fa);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .stat .sub {
+    font-size: 13px; color: var(--text-soft); margin-top: 4px;
+  }
+
+  /* CHARTS */
+  .charts {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 18px; margin-bottom: 24px;
+  }
+  @media (max-width: 900px) { .charts { grid-template-columns: 1fr; } }
+
+  .card {
+    padding: 24px;
+    border-radius: 22px;
+    background: var(--glass);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 14px 40px rgba(0,0,0,0.28);
+  }
+  .card h3 {
+    font-size: 17px; font-weight: 800;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card h3 .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: linear-gradient(135deg, #f72585, #b5179e);
+    box-shadow: 0 0 12px rgba(247,37,133,0.8);
+  }
+  .chart-wrap { position: relative; height: 320px; }
+  .chart-wrap.sm { height: 260px; }
+
+  /* PAIR */
+  .pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px; margin-bottom: 24px;
+  }
+  @media (max-width: 700px) { .pair { grid-template-columns: 1fr; } }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; border-radius: 14px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    min-width: 800px;
+  }
+  thead th {
+    background: linear-gradient(90deg, rgba(247,37,133,0.5), rgba(114,9,183,0.5));
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 13px;
+    position: sticky; top: 0;
+  }
+  tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-soft);
+  }
+  tbody tr:hover td { background: rgba(255,255,255,0.08); color: #fff; }
+  .badge-mini {
+    display: inline-block; padding: 3px 9px; border-radius: 999px;
+    font-size: 12px; font-weight: 700;
+  }
+  .badge-mini.yes { background: rgba(46,213,115,0.3); border: 1px solid #2ed573; }
+  .badge-mini.no  { background: rgba(255,107,107,0.25); border: 1px solid #ff6b6b; }
+  .badge-mini.onsite { background: rgba(76,201,240,0.3); border: 1px solid #4cc9f0; }
+  .badge-mini.online { background: rgba(247,37,133,0.3); border: 1px solid #f72585; }
+
+  /* LOADING / ERROR */
+  .loader {
+    padding: 40px; text-align: center; font-size: 16px;
+    color: var(--text-soft);
+  }
+  .spinner {
+    display: inline-block; width: 40px; height: 40px;
+    border: 4px solid rgba(255,255,255,0.2);
+    border-top-color: #f72585;
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+    margin-bottom: 10px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error-box {
+    padding: 22px;
+    border-radius: 14px;
+    background: rgba(255,71,87,0.25);
+    border: 1px solid #ff4757;
+    font-size: 14px;
+  }
+
+  .empty {
+    padding: 50px 20px; text-align: center;
+    color: var(--text-soft);
+  }
+  .empty .big { font-size: 60px; margin-bottom: 12px; }
+
+  .footer-note {
+    text-align: center; margin-top: 30px;
+    color: rgba(255,255,255,0.55); font-size: 13px;
+  }
+  .footer-note a { color: #ffd6fa; }
+</style>
+</head>
+<body>
+
+<div class="sparkles" aria-hidden="true">
+  <span>📊</span><span>✨</span><span>💜</span><span>🎯</span>
+  <span>📈</span><span>💫</span>
+</div>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <div>
+      <div><span class="pill">LIVE</span><span class="meta">奇美醫院 教學部 · 報名現況</span></div>
+      <h1>📊 教學訓練計畫主持人工作坊 — 報名儀表板 ✨</h1>
+      <div class="meta" id="lastUpdated">載入中...</div>
+    </div>
+    <button class="btn" id="refreshBtn">🔄 重新整理</button>
+    <a class="btn ghost" href="index.html">📝 前往報名表</a>
+  </div>
+
+  <div id="content">
+    <div class="loader">
+      <div class="spinner"></div>
+      <div>🚀 正在從 Google Sheets 讀取資料...</div>
+    </div>
+  </div>
+
+  <p class="footer-note">© 2026 奇美醫院 教學部 • 教學訓練計畫主持人工作坊 🎓💜 · Powered by Google Apps Script</p>
+</div>
+
+<script>
+  const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzO0PTIIMwhT22qe6GzfFd_uT08kXVB5Ueo6oPz9V6AVzX5BIREm5Lqq7b1-OwNX3Oo/exec";
+
+  const JOB_CATEGORIES = [
+    "藥事", "醫事放射", "醫事檢驗", "護理", "營養", "呼吸治療",
+    "聽力", "物理治療", "職能治療", "臨床心理", "語言治療", "其他"
+  ];
+
+  const content = document.getElementById("content");
+  const lastUpdated = document.getElementById("lastUpdated");
+  const refreshBtn = document.getElementById("refreshBtn");
+  let charts = {};
+
+  async function loadData() {
+    content.innerHTML = `
+      <div class="loader">
+        <div class="spinner"></div>
+        <div>🚀 正在從 Google Sheets 讀取資料...</div>
+      </div>`;
+    try {
+      const res = await fetch(GAS_WEBAPP_URL + "?action=data&t=" + Date.now(), { method: "GET" });
+      const data = await res.json();
+      if (data.status !== "ok") throw new Error(data.message || "讀取失敗");
+      render(data);
+      lastUpdated.textContent = "🕒 最後更新：" + new Date().toLocaleString("zh-TW");
+    } catch (err) {
+      content.innerHTML = `<div class="error-box">❌ 讀取資料失敗：${err.message}<br/>請確認 Apps Script 已部署並對「任何人」開放讀取權限。</div>`;
+    }
+  }
+
+  function render(data) {
+    const rows = data.rows || [];
+    if (rows.length === 0) {
+      content.innerHTML = `
+        <div class="card">
+          <div class="empty">
+            <div class="big">📭</div>
+            <div style="font-size:20px; font-weight:800; margin-bottom:6px;">目前尚無報名資料</div>
+            <div>等第一位朋友報名後，儀表板就會動起來 💫</div>
+          </div>
+        </div>`;
+      return;
+    }
+
+    const total = rows.length;
+    const hostYes = rows.filter(r => r.isHost === "是").length;
+    const attOnsite = rows.filter(r => r.attendance === "實體").length;
+    const attOnline = rows.filter(r => r.attendance === "線上").length;
+    const orgSet = new Set(rows.map(r => r.organization).filter(Boolean));
+
+    const jobCounts = {};
+    JOB_CATEGORIES.forEach(c => jobCounts[c] = 0);
+    rows.forEach(r => {
+      const k = r.jobCategory || "其他";
+      jobCounts[k] = (jobCounts[k] || 0) + 1;
+    });
+
+    // 每日報名趨勢
+    const dayCounts = {};
+    rows.forEach(r => {
+      const d = new Date(r.timestamp);
+      if (isNaN(d)) return;
+      const key = d.getFullYear() + "/" + String(d.getMonth()+1).padStart(2,"0") + "/" + String(d.getDate()).padStart(2,"0");
+      dayCounts[key] = (dayCounts[key] || 0) + 1;
+    });
+    const dayKeys = Object.keys(dayCounts).sort();
+
+    content.innerHTML = `
+      <div class="stats">
+        <div class="stat">
+          <div class="icon">👥</div>
+          <div class="label">總報名人數</div>
+          <div class="value">${total}</div>
+          <div class="sub">累計截至目前</div>
+        </div>
+        <div class="stat">
+          <div class="icon">🎖️</div>
+          <div class="label">主持人身分</div>
+          <div class="value">${hostYes}</div>
+          <div class="sub">佔 ${((hostYes/total)*100).toFixed(0)}%</div>
+        </div>
+        <div class="stat">
+          <div class="icon">🏫</div>
+          <div class="label">實體 / 線上</div>
+          <div class="value">${attOnsite} / ${attOnline}</div>
+          <div class="sub">實體佔 ${((attOnsite/total)*100).toFixed(0)}%</div>
+        </div>
+        <div class="stat">
+          <div class="icon">🏥</div>
+          <div class="label">參與機構數</div>
+          <div class="value">${orgSet.size}</div>
+          <div class="sub">跨機構交流</div>
+        </div>
+      </div>
+
+      <div class="charts">
+        <div class="card">
+          <h3><span class="dot"></span>🧪 各職類報名分布</h3>
+          <div class="chart-wrap"><canvas id="chartJob"></canvas></div>
+        </div>
+        <div class="card">
+          <h3><span class="dot"></span>🌐 參與方式</h3>
+          <div class="chart-wrap"><canvas id="chartAtt"></canvas></div>
+        </div>
+      </div>
+
+      <div class="pair">
+        <div class="card">
+          <h3><span class="dot"></span>🎖️ 是否擔任主持人</h3>
+          <div class="chart-wrap sm"><canvas id="chartHost"></canvas></div>
+        </div>
+        <div class="card">
+          <h3><span class="dot"></span>📈 每日報名趨勢</h3>
+          <div class="chart-wrap sm"><canvas id="chartTrend"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="dot"></span>📋 最新報名列表（最近 10 筆）</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>提交時間</th>
+                <th>姓名</th>
+                <th>機構</th>
+                <th>職稱</th>
+                <th>職類</th>
+                <th>主持人</th>
+                <th>參與方式</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.slice().reverse().slice(0, 10).map(r => `
+                <tr>
+                  <td>${formatTime(r.timestamp)}</td>
+                  <td><strong>${escape(r.name)}</strong></td>
+                  <td>${escape(r.organization)}</td>
+                  <td>${escape(r.title)}</td>
+                  <td>${escape(r.jobCategory)}</td>
+                  <td><span class="badge-mini ${r.isHost==="是"?"yes":"no"}">${escape(r.isHost)}</span></td>
+                  <td><span class="badge-mini ${r.attendance==="實體"?"onsite":"online"}">${escape(r.attendance)}</span></td>
+                </tr>`).join("")}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    renderCharts(jobCounts, attOnsite, attOnline, hostYes, total - hostYes, dayKeys, dayCounts);
+  }
+
+  function renderCharts(jobCounts, attOnsite, attOnline, hostYes, hostNo, dayKeys, dayCounts) {
+    Object.values(charts).forEach(c => c && c.destroy());
+    charts = {};
+
+    Chart.defaults.color = "rgba(255,255,255,0.85)";
+    Chart.defaults.font.family = '"Microsoft JhengHei", "PingFang TC", "Segoe UI", sans-serif';
+    Chart.defaults.font.size = 12;
+
+    const palette = [
+      "#f72585","#b5179e","#7209b7","#560bad","#480ca8","#3a0ca3",
+      "#3f37c9","#4361ee","#4895ef","#4cc9f0","#ff9ee0","#ffd6fa"
+    ];
+
+    charts.job = new Chart(document.getElementById("chartJob"), {
+      type: "bar",
+      data: {
+        labels: Object.keys(jobCounts),
+        datasets: [{
+          label: "報名人數",
+          data: Object.values(jobCounts),
+          backgroundColor: palette,
+          borderRadius: 8,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        indexAxis: "y",
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { color: "rgba(255,255,255,0.08)" }, ticks: { precision: 0 } },
+          y: { grid: { display: false } }
+        }
+      }
+    });
+
+    charts.att = new Chart(document.getElementById("chartAtt"), {
+      type: "doughnut",
+      data: {
+        labels: ["🏫 實體", "💻 線上"],
+        datasets: [{
+          data: [attOnsite, attOnline],
+          backgroundColor: ["#4cc9f0", "#f72585"],
+          borderColor: "rgba(255,255,255,0.15)",
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        cutout: "62%",
+        plugins: { legend: { position: "bottom" } }
+      }
+    });
+
+    charts.host = new Chart(document.getElementById("chartHost"), {
+      type: "doughnut",
+      data: {
+        labels: ["✅ 是", "🚫 否"],
+        datasets: [{
+          data: [hostYes, hostNo],
+          backgroundColor: ["#b5179e", "#4361ee"],
+          borderColor: "rgba(255,255,255,0.15)",
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        cutout: "62%",
+        plugins: { legend: { position: "bottom" } }
+      }
+    });
+
+    charts.trend = new Chart(document.getElementById("chartTrend"), {
+      type: "line",
+      data: {
+        labels: dayKeys,
+        datasets: [{
+          label: "每日報名數",
+          data: dayKeys.map(k => dayCounts[k]),
+          borderColor: "#f72585",
+          backgroundColor: "rgba(247,37,133,0.25)",
+          fill: true,
+          tension: 0.35,
+          pointRadius: 5,
+          pointBackgroundColor: "#fff",
+          pointBorderColor: "#f72585",
+          pointBorderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { color: "rgba(255,255,255,0.08)" } },
+          y: { grid: { color: "rgba(255,255,255,0.08)" }, beginAtZero: true, ticks: { precision: 0 } }
+        }
+      }
+    });
+  }
+
+  function formatTime(t) {
+    const d = new Date(t);
+    if (isNaN(d)) return t || "";
+    return d.toLocaleString("zh-TW", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+  }
+  function escape(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, m => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[m]));
+  }
+
+  refreshBtn.addEventListener("click", loadData);
+  loadData();
+  setInterval(loadData, 60000);
+</script>
+
+</body>
+</html>
